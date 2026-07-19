@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(npm install *)",
+      "Bash(npm ci *)",
+      "Bash(npm audit *)",
+      "Bash(npm ls *)",
+      "Bash(npx eslint *)",
+      "Bash(npx tsc *)",
+      "Bash(npx vite *)",
+      "Bash(docker compose *)",
+      "Bash(docker build *)",
+      "Bash(docker ps *)",
+      "Bash(docker logs *)"
+    ]
+  }
+}

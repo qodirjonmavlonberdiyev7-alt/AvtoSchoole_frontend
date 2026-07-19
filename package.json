@@ -1,0 +1,20 @@
+{
+  "name": "avtoschoole-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Xorazm.PravaUz - frontend (React + Vite) monorepo",
+  "workspaces": [
+    "web",
+    "packages/shared"
+  ],
+  "scripts": {
+    "shared:build": "npm run build -w packages/shared",
+    "dev": "npm run dev -w web",
+    "build": "npm run shared:build && npm run build -w web",
+    "preview": "npm run preview -w web",
+    "lint": "npm run lint -w web"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
