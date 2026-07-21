@@ -2,7 +2,7 @@ import { api } from './baseApi';
 
 export interface ScheduleEntry {
   id: string;
-  groupId: string;
+  teacherId: string;
   date: string;
   startTime: string;
   endTime: string;
@@ -20,28 +20,21 @@ type UpdateScheduleEntryBody = Partial<CreateScheduleEntryBody>;
 
 export const scheduleApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    listSchedule: builder.query<ScheduleEntry[], string>({
-      query: (groupId) => `/groups/${groupId}/schedule`,
-      providesTags: (_result, _error, groupId) => [{ type: 'Schedule', id: groupId }],
+    listSchedule: builder.query<ScheduleEntry[], void>({
+      query: () => '/schedule/my',
+      providesTags: ['Schedule'],
     }),
-    addScheduleEntry: builder.mutation<ScheduleEntry, { groupId: string; body: CreateScheduleEntryBody }>({
-      query: ({ groupId, body }) => ({ url: `/groups/${groupId}/schedule`, method: 'POST', body }),
-      invalidatesTags: (_result, _error, { groupId }) => [{ type: 'Schedule', id: groupId }],
+    addScheduleEntry: builder.mutation<ScheduleEntry, CreateScheduleEntryBody>({
+      query: (body) => ({ url: '/schedule', method: 'POST', body }),
+      invalidatesTags: ['Schedule'],
     }),
-    updateScheduleEntry: builder.mutation<
-      ScheduleEntry,
-      { groupId: string; entryId: string; body: UpdateScheduleEntryBody }
-    >({
-      query: ({ groupId, entryId, body }) => ({
-        url: `/groups/${groupId}/schedule/${entryId}`,
-        method: 'PATCH',
-        body,
-      }),
-      invalidatesTags: (_result, _error, { groupId }) => [{ type: 'Schedule', id: groupId }],
+    updateScheduleEntry: builder.mutation<ScheduleEntry, { entryId: string; body: UpdateScheduleEntryBody }>({
+      query: ({ entryId, body }) => ({ url: `/schedule/${entryId}`, method: 'PATCH', body }),
+      invalidatesTags: ['Schedule'],
     }),
-    removeScheduleEntry: builder.mutation<void, { groupId: string; entryId: string }>({
-      query: ({ groupId, entryId }) => ({ url: `/groups/${groupId}/schedule/${entryId}`, method: 'DELETE' }),
-      invalidatesTags: (_result, _error, { groupId }) => [{ type: 'Schedule', id: groupId }],
+    removeScheduleEntry: builder.mutation<void, string>({
+      query: (entryId) => ({ url: `/schedule/${entryId}`, method: 'DELETE' }),
+      invalidatesTags: ['Schedule'],
     }),
   }),
 });

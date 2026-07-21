@@ -649,11 +649,11 @@ export function GroupDetailPage() {
 
   const items = useMemo(() => {
     if (isStudent) {
-      return [{ key: 'schedule', label: t('schedule.title'), children: <ScheduleManager groupId={groupId} canManage={false} /> }];
+      return [{ key: 'schedule', label: t('schedule.title'), children: <ScheduleManager canManage={false} /> }];
     }
     const tabs = [
       { key: 'students', label: t('groups.students'), children: <StudentsTab groupId={groupId} canManage={canManage} /> },
-      { key: 'schedule', label: t('schedule.title'), children: <ScheduleManager groupId={groupId} canManage={canManage} /> },
+      { key: 'schedule', label: t('schedule.title'), children: <ScheduleManager canManage={canManage} /> },
     ];
     if (canManage) {
       tabs.push({ key: 'billing', label: t('billing.title'), children: <BillingTab groupId={groupId} /> });

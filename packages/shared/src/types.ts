@@ -37,7 +37,7 @@ export interface GroupMemberDto {
 
 export interface ScheduleEntryDto {
   id: string;
-  groupId: string;
+  teacherId: string;
   date: string;
   startTime: string;
   endTime: string;

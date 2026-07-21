@@ -50,14 +50,15 @@ interface EditFormValues {
 type ScheduleRow = { key: string; date: string; entry: ScheduleEntry | null };
 
 /**
- * Lesson schedule for one group, scoped to the current calendar week - a group's real weekly
- * schedule shifts week to week, so entries are dated (not a recurring weekday template) and only
- * this week's entries show by default; once the week passes, the teacher fills in fresh ones.
- * Read-only for students, full CRUD for the teacher.
+ * One shared lesson schedule per teacher (same content everywhere it's shown - the top-level
+ * "Dars jadvali" page and every group's own tab), scoped to the current calendar week - the real
+ * weekly plan shifts week to week, so entries are dated (not a recurring weekday template) and
+ * only this week's entries show by default; once the week passes, the teacher fills in fresh
+ * ones. Read-only for students, full CRUD for the teacher.
  */
-export function ScheduleManager({ groupId, canManage }: { groupId: string; canManage: boolean }) {
+export function ScheduleManager({ canManage }: { canManage: boolean }) {
   const { t } = useTranslation();
-  const { data: entries, isLoading } = useListScheduleQuery(groupId);
+  const { data: entries, isLoading } = useListScheduleQuery();
   const [addEntry, { isLoading: isAdding }] = useAddScheduleEntryMutation();
   const [updateEntry, { isLoading: isUpdating }] = useUpdateScheduleEntryMutation();
   const [removeEntry] = useRemoveScheduleEntryMutation();
@@ -90,13 +91,10 @@ export function ScheduleManager({ groupId, canManage }: { groupId: string; canMa
       await Promise.all(
         values.slots.map((slot) =>
           addEntry({
-            groupId,
-            body: {
-              date: values.date.format('YYYY-MM-DD'),
-              startTime: slot.time[0].format('HH:mm'),
-              endTime: slot.time[1].format('HH:mm'),
-              topic: slot.topic,
-            },
+            date: values.date.format('YYYY-MM-DD'),
+            startTime: slot.time[0].format('HH:mm'),
+            endTime: slot.time[1].format('HH:mm'),
+            topic: slot.topic,
           }).unwrap(),
         ),
       );
@@ -112,7 +110,6 @@ export function ScheduleManager({ groupId, canManage }: { groupId: string; canMa
     if (!editingEntry) return;
     try {
       await updateEntry({
-        groupId,
         entryId: editingEntry.id,
         body: {
           date: values.date.format('YYYY-MM-DD'),
@@ -130,7 +127,7 @@ export function ScheduleManager({ groupId, canManage }: { groupId: string; canMa
 
   const handleRemove = async (entryId: string) => {
     try {
-      await removeEntry({ groupId, entryId }).unwrap();
+      await removeEntry(entryId).unwrap();
       notifySuccess(t('notify.scheduleRemoved'));
     } catch {
       notifyError(t('notify.scheduleRemoveFailed'));
